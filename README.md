@@ -13,5 +13,5 @@ Be the first snake to reach to reach a length of 10.
 To run the native app, clone the repo and run:
 
 ```bash
-cargo run --relase
+cargo run --release
 ```
