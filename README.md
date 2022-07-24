@@ -6,9 +6,12 @@ https://user-images.githubusercontent.com/12845088/180652387-7ec64538-4bdd-4dc7-
 
 ## Usage
 
+[Play the web build here](https://cswinter.github.io/bevy_snake_ai/).
+Control the blue snake with WASD.
+Be the first snake to reach to reach a length of 10.
+
+To run the native app, clone the repo and run:
+
 ```bash
 cargo run --relase
 ```
-
-Control the blue snake with WASD.
-
