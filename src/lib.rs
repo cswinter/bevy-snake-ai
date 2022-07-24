@@ -3,14 +3,14 @@ mod ai;
 #[cfg(feature = "python")]
 pub mod python;
 
-use std::time::Duration;
 
+#[cfg(feature = "python")]
+use entity_gym_rs::agent::TrainAgent;
 use ai::{snake_movement_agent, OpponentHandles, Opponents, Players};
-use bevy::app::ScheduleRunnerSettings;
 use bevy::core::FixedTimestep;
 use bevy::prelude::*;
 use entity_gym_rs::agent::{
-    self, Action, Agent, Obs, RogueNetAgent, RogueNetAsset, RogueNetAssetLoader,
+    self, Action, Agent, Obs, RogueNetAgent, RogueNetAsset, RogueNetAssetLoader
 };
 use rand::prelude::SmallRng;
 use rand::{Rng, SeedableRng};
@@ -584,7 +584,12 @@ pub fn run(
         .run();
 }
 
-pub fn run_headless(agents: [Box<dyn Agent>; 2], seed: u64) {
+
+#[cfg(feature = "python")]
+pub fn run_headless(_: python::Config, agents: [TrainAgent; 2], seed: u64) {
+    use std::time::Duration;
+    use bevy::app::ScheduleRunnerSettings;
+
     let [a1, a2] = agents;
     base_app(&mut App::new(), seed, None)
         .insert_resource(ScheduleRunnerSettings::run_loop(Duration::from_secs_f64(
@@ -592,7 +597,7 @@ pub fn run_headless(agents: [Box<dyn Agent>; 2], seed: u64) {
         )))
         .insert_resource(Config { easy_mode: false })
         .insert_resource(Opponents(vec![]))
-        .insert_non_send_resource(Players([Some(a1), Some(a2)]))
+        .insert_non_send_resource(Players([Some(Box::new(a1)), Some(Box::new(a2))]))
         .add_plugins(MinimalPlugins)
         .run();
 }
