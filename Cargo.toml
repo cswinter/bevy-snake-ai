@@ -1,5 +1,5 @@
 [package]
-name = "bevy-multisnake"
+name = "bevy-snake-ai"
 version = "0.1.0"
 authors = ["Clemens Winter <clemenswinter1@gmail.com>", "Marcus Buffett <marcusbuffett@me.com>"]
 edition = "2021"
@@ -12,7 +12,7 @@ name = "bevy_multisnake"
 bevy = "0.7.0"
 rand = { version = "0.8.5", features = ["small_rng"] }
 
-entity-gym-rs = { path = "../..", features = ["bevy"] }
+entity-gym-rs = { version = "0.1.3", features = ["bevy"] }
 pyo3 = { version = "0.15", features = ["extension-module"], optional = true }
 
 clap = { version = "3.1.7", features = ["derive"] }

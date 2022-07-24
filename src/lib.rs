@@ -347,9 +347,8 @@ fn game_over(
         }
 
         if let Some(mut level) = level.iter_mut().next() {
-            println!("{:?}", level.level);
             match winner {
-                Some(Player::Blue) if dbg!(level.level) < dbg!(opponents.0.len()) => {
+                Some(Player::Blue) if level.level < opponents.0.len() => {
                     level.level += 1
                 }
                 Some(Player::Red) if level.level > 1 => level.level -= 1,
