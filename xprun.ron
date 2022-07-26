@@ -32,9 +32,8 @@ XpV0(
                 Cd("/root/bevy-snake-ai"),
 
                 Run("poetry install"),
-                Run("poetry run pip install setuptools==59.5.0"),
-                Run("poetry run pip install torch==1.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html"),
-                Run("poetry run pip install torch-scatter -f https://data.pyg.org/whl/torch-1.10.0+cu113.html"),
+                Run("poetry run pip install torch==1.12.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html"),
+                Run("poetry run pip install torch-scatter -f https://data.pyg.org/whl/torch-1.12.0+cu113.html"),
 
                 // Build xprun from source
                 Repo(url: "git@github.com:cswinter/xprun.git", rev: "d8a58d8", target_dir: "/root"),
