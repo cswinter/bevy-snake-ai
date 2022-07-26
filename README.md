@@ -46,9 +46,9 @@ Instead, we first call the nonblocking [`AgentOps::act_async`](https://docs.rs/e
 
 If we allow the AI to instantly take an action on every frame, it plays much too quickly for humans to keep up.
 To simulate human reaction speeds, we introduce a delay to all actions by the AI.
-The first part is to add a `action_queue: VecDeque<Direction>` field to the `SnakeHead` entity which will queue up actions to be taken on future frames.
-When the AI takes an action, instead of applying it immediately, we instead add it to the back of the queue.
-Once the queue reaches the maximum length, we remove the first action in the queue.
+We do this by adding an `action_queue: VecDeque<Direction>` field to the `SnakeHead` entity which will queue up actions to be taken on future frames.
+When the AI takes an action, instead of applying it immediately, we instead push it to the back of the queue.
+Once the queue reaches the maximum length, we pop and apply the action at the front  the queue.
 
 ```rust
 head.action_queue.push_back(dir);
