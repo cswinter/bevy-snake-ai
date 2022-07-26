@@ -28,7 +28,7 @@ XpV0(
                         "poetry.lock",
                     ],
                     target_dir: "/root/bevy-snake-ai",
-                    rev: "444d7d7",
+                    rev: "3f769ec",
                 ),
 
                 // Build xprun from source
