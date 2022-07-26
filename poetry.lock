@@ -241,6 +241,19 @@ ragged-buffer = ">=0.3.9,<0.4.0"
 tqdm = ">=4.63.1,<5.0.0"
 
 [[package]]
+name = "entity-gym-rs"
+version = "0.3.1"
+description = "Rust bindings for the entity-gym library"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+entity-gym = ">=0.1.5,<0.2.0"
+numpy = ">=1.22.3,<1.23.0"
+ragged-buffer = ">=0.3.7,<0.4.0"
+
+[[package]]
 name = "gitdb"
 version = "4.0.9"
 description = "Git Object Database"
@@ -515,7 +528,7 @@ numpy = ">=1.9.0"
 
 [[package]]
 name = "numpy"
-version = "1.23.1"
+version = "1.22.4"
 description = "NumPy is the fundamental package for array computing with Python."
 category = "main"
 optional = false
@@ -1062,7 +1075,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8.0,<3.10"
-content-hash = "0e5bbcaef7b4255e211251873f1b30cdcb3d32bf0db92e4831fa340253d1a2c0"
+content-hash = "189944d0052963ad7c8901c2f21037743764daf6e6d3db1d3e5a624796358ff2"
 
 [metadata.files]
 absl-py = []
@@ -1085,6 +1098,7 @@ docker-pycreds = []
 docstring-parser = []
 enn-trainer = []
 entity-gym = []
+entity-gym-rs = []
 gitdb = []
 gitpython = []
 google-auth = []

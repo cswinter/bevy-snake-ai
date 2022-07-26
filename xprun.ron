@@ -26,16 +26,14 @@ XpV0(
                     paths: [
                         "pyproject.toml",
                         "poetry.lock",
-                        "examples/bevy_multisnake/pyproject.toml",
-                        "examples/bevy_multisnake/poetry.lock",
                     ],
-                    target_dir: "/root/entity-gym-rs",
-                    rev: "f48fc73",
+                    target_dir: "/root/bevy-snake-ai",
+                    rev: "444d7d7",
                 ),
 
                 // Build xprun from source
                 Repo(url: "git@github.com:cswinter/xprun.git", rev: "d8a58d8", target_dir: "/root"),
-                Cd("/root/entity-gym-rs/examples/bevy_multisnake"),
+                Cd("/root/bevy-snake-ai"),
                 Run("poetry run pip install maturin==0.13.0"),
                 Run("poetry run maturin develop --features=python --release --manifest-path=/root/xprun/Cargo.toml"),
 
@@ -48,8 +46,7 @@ XpV0(
 
                 // Build entity-gym-rs and bevy_multisnake
                 Repo(target_dir: "/root"),
-                Cd("/root/entity-gym-rs/examples/bevy_multisnake"),
-                Run("poetry run maturin develop --features=python --release --manifest-path=../../Cargo.toml"),
+                Cd("/root/bevy-snake-ai"),
                 Run("poetry run maturin develop --features=python --release"),
             ],
             gpu: 1,
