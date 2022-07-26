@@ -38,6 +38,12 @@ pub(crate) fn snake_movement_agent(
                 x: p.x,
                 y: p.y,
                 is_enemy: false,
+                action_delay: head.action_delay as u64,
+                action_queue: [
+                    head.action_queue.get(0).into(),
+                    head.action_queue.get(1).into(),
+                    head.action_queue.get(2).into(),
+                ],
             }))
             .entities(segment.iter().map(|(_, p, plr)| SnakeSegment {
                 x: p.x,
@@ -61,8 +67,12 @@ pub(crate) fn snake_movement_agent(
     for (mut head, action) in head_actions.into_iter() {
         match action.rcv() {
             Some(dir) => {
-                if dir != head.direction.opposite() {
-                    head.direction = dir;
+                head.action_queue.push_back(dir);
+                if head.action_queue.len() >= head.action_delay {
+                    let dir = head.action_queue.pop_front().expect("literally can't");
+                    if dir != head.direction.opposite() {
+                        head.direction = dir;
+                    }
                 }
             }
             None => exit.send(AppExit),
@@ -80,6 +90,17 @@ pub struct Head {
     x: i32,
     y: i32,
     is_enemy: bool,
+    action_delay: u64,
+    action_queue: [QueuedMove; 3],
+}
+
+#[derive(Featurizable)]
+pub enum QueuedMove {
+    Up,
+    Down,
+    Left,
+    Right,
+    None,
 }
 
 #[derive(Featurizable)]
@@ -93,4 +114,16 @@ pub struct SnakeSegment {
 pub struct Food {
     x: i32,
     y: i32,
+}
+
+impl<'a> From<Option<&'a Direction>> for QueuedMove {
+    fn from(dir: Option<&'a Direction>) -> Self {
+        match dir {
+            Some(Direction::Up) => QueuedMove::Up,
+            Some(Direction::Down) => QueuedMove::Down,
+            Some(Direction::Left) => QueuedMove::Left,
+            Some(Direction::Right) => QueuedMove::Right,
+            None => QueuedMove::None,
+        }
+    }
 }

@@ -3,14 +3,16 @@ mod ai;
 #[cfg(feature = "python")]
 pub mod python;
 
+use std::collections::VecDeque;
+use std::ops::Range;
 
-#[cfg(feature = "python")]
-use entity_gym_rs::agent::TrainAgent;
 use ai::{snake_movement_agent, OpponentHandles, Opponents, Players};
 use bevy::core::FixedTimestep;
 use bevy::prelude::*;
+#[cfg(feature = "python")]
+use entity_gym_rs::agent::TrainAgent;
 use entity_gym_rs::agent::{
-    self, Action, Agent, Obs, RogueNetAgent, RogueNetAsset, RogueNetAssetLoader
+    self, Action, Agent, Obs, RogueNetAgent, RogueNetAsset, RogueNetAssetLoader,
 };
 use rand::prelude::SmallRng;
 use rand::{Rng, SeedableRng};
@@ -24,6 +26,7 @@ const ARENA_WIDTH: u32 = 10;
 
 struct Config {
     easy_mode: bool,
+    action_delay: Range<usize>,
 }
 
 #[derive(Component, Clone, Copy, PartialEq, Eq)]
@@ -80,6 +83,8 @@ impl Size {
 struct SnakeHead {
     direction: Direction,
     last_direction: Direction,
+    action_queue: VecDeque<Direction>,
+    action_delay: usize,
 }
 
 struct GameOverEvent(Option<Player>, GameOverReason);
@@ -161,7 +166,9 @@ fn spawn_snake(
     mut commands: Commands,
     mut segments: ResMut<SnakeSegments>,
     mut rng: ResMut<SmallRng>,
+    config: Res<Config>,
 ) {
+    let action_delay = rng.gen_range(config.action_delay.clone());
     let mut ss = (0..2)
         .map(|p| {
             let half_width = ARENA_WIDTH / 2;
@@ -180,6 +187,8 @@ fn spawn_snake(
                     .insert(SnakeHead {
                         direction: Direction::Up,
                         last_direction: Direction::Up,
+                        action_queue: VecDeque::new(),
+                        action_delay,
                     })
                     .insert(SnakeSegment)
                     .insert(Position { x, y })
@@ -348,9 +357,7 @@ fn game_over(
 
         if let Some(mut level) = level.iter_mut().next() {
             match winner {
-                Some(Player::Blue) if level.level < opponents.0.len() => {
-                    level.level += 1
-                }
+                Some(Player::Blue) if level.level < opponents.0.len() => level.level += 1,
                 Some(Player::Red) if level.level > 1 => level.level -= 1,
                 _ => {}
             }
@@ -383,13 +390,14 @@ fn reset_game(
     mut level_text: Query<(&Level, &mut Text)>,
     rng: ResMut<SmallRng>,
     food: Query<Entity, With<Food>>,
+    config: Res<Config>,
 ) {
     if let Some(ResetGameEvent) = reader.iter().next() {
         for ent in food.iter().chain(segments.iter()) {
             commands.entity(ent).despawn();
         }
         food_timer.0 = Some(4);
-        spawn_snake(commands, segments_res, rng);
+        spawn_snake(commands, segments_res, rng, config);
         if let Some((level, mut text)) = level_text.iter_mut().next() {
             text.sections[0].value = format!("level {}", level.level);
         }
@@ -567,7 +575,10 @@ pub fn run(
             ..default()
         })
         .insert_non_send_resource(Players([player, Some(opponent)]))
-        .insert_resource(Config { easy_mode })
+        .insert_resource(Config {
+            easy_mode,
+            action_delay: 2..3,
+        })
         .add_system(snake_movement_input.before(snake_movement))
         .add_startup_system(spawn_level_text)
         .insert_resource(Opponents(opponents))
@@ -584,18 +595,20 @@ pub fn run(
         .run();
 }
 
-
 #[cfg(feature = "python")]
 pub fn run_headless(_: python::Config, agents: [TrainAgent; 2], seed: u64) {
-    use std::time::Duration;
     use bevy::app::ScheduleRunnerSettings;
+    use std::time::Duration;
 
     let [a1, a2] = agents;
     base_app(&mut App::new(), seed, None)
         .insert_resource(ScheduleRunnerSettings::run_loop(Duration::from_secs_f64(
             0.0,
         )))
-        .insert_resource(Config { easy_mode: false })
+        .insert_resource(Config {
+            easy_mode: false,
+            action_delay: 0..4,
+        })
         .insert_resource(Opponents(vec![]))
         .insert_non_send_resource(Players([Some(Box::new(a1)), Some(Box::new(a2))]))
         .add_plugins(MinimalPlugins)
