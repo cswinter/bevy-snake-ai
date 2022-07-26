@@ -68,8 +68,8 @@ pub(crate) fn snake_movement_agent(
         match action.rcv() {
             Some(dir) => {
                 head.action_queue.push_back(dir);
-                if head.action_queue.len() >= head.action_delay {
-                    let dir = head.action_queue.pop_front().expect("literally can't");
+                if head.action_queue.len() > head.action_delay {
+                    let dir = head.action_queue.pop_front().unwrap();
                     if dir != head.direction.opposite() {
                         head.direction = dir;
                     }

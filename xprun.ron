@@ -21,30 +21,26 @@ XpV0(
                 Run("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"),
                 Env("PATH", "/root/.cargo/bin:${PATH}"),
 
-                // Cache dependencies by installing them at fixed commit (to avoid long rebuilds when changing dependencies)
+                // Copy just the dependency files to avoid reinstalls unless dependencies change
                 Repo(
                     paths: [
                         "pyproject.toml",
                         "poetry.lock",
                     ],
                     target_dir: "/root/bevy-snake-ai",
-                    rev: "3f769ec",
                 ),
-
-                // Build xprun from source
-                Repo(url: "git@github.com:cswinter/xprun.git", rev: "d8a58d8", target_dir: "/root"),
                 Cd("/root/bevy-snake-ai"),
-                Run("poetry run pip install maturin==0.13.0"),
-                Run("poetry run maturin develop --features=python --release --manifest-path=/root/xprun/Cargo.toml"),
 
                 Run("poetry install"),
                 Run("poetry run pip install setuptools==59.5.0"),
                 Run("poetry run pip install torch==1.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html"),
                 Run("poetry run pip install torch-scatter -f https://data.pyg.org/whl/torch-1.10.0+cu113.html"),
 
-                Run("poetry install"),
+                // Build xprun from source
+                Repo(url: "git@github.com:cswinter/xprun.git", rev: "d8a58d8", target_dir: "/root"),
+                Run("poetry run maturin develop --features=python --release --manifest-path=/root/xprun/Cargo.toml"),
 
-                // Build entity-gym-rs and bevy_multisnake
+                // Build bevy-snake-ai
                 Repo(target_dir: "/root"),
                 Cd("/root/bevy-snake-ai"),
                 Run("poetry run maturin develop --features=python --release"),
