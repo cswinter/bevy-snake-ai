@@ -48,10 +48,17 @@ pub(crate) fn snake_movement_agent(
                     head.action_queue.get(2).into(),
                 ],
             }))
-            .entities(segment.iter().map(|(_, p, plr)| SnakeSegment {
-                x: p.x,
-                y: p.y,
-                is_enemy: player != plr,
+            .entities(segments_res.0.iter().flat_map(|segments| {
+                segments.iter().enumerate().map(|(i, entity)| {
+                    let (_, p, plr) = segment.get(*entity).unwrap();
+                    SnakeSegment {
+                        x: p.x,
+                        y: p.y,
+                        is_enemy: player != plr,
+                        distance_from_head: i as u32,
+                        distance_from_tail: (segments.len() - i - 1) as u32,
+                    }
+                })
             }));
         match player {
             Player::Red if !opponents.0.is_empty() => {
@@ -111,6 +118,8 @@ pub struct SnakeSegment {
     x: i32,
     y: i32,
     is_enemy: bool,
+    distance_from_head: u32,
+    distance_from_tail: u32,
 }
 
 #[derive(Featurizable)]
