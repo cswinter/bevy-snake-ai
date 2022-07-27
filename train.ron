@@ -11,4 +11,14 @@ TrainConfig(
             per_entity_values: false,
         ),
     ),
+    eval: (
+        interval: 1000000,
+        num_envs: 512,
+        steps: 200,
+        opponent: "/xprun/data/enn/220727-040246-2snake-128m-1108652b00ef4991be236e189e382f57/checkpoints/latest-step000128000000/",
+        env: (
+            id: "BevySnake",
+            kwargs: "{\"min_action_delay\": 2, \"max_action_delay\": 2}",
+        )
+    ),
 )

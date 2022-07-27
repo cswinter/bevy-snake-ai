@@ -1,4 +1,5 @@
 import hyperstate
+import json
 from enn_trainer import TrainConfig, State, init_train_state, train, EnvConfig
 from entity_gym.env import VecEnv
 from entity_gym_rs import RustVecEnv
@@ -9,8 +10,9 @@ from bevy_multisnake import create_env, Config
 def create_snake_vec_env(
     cfg: EnvConfig, num_envs: int, num_processes: int, first_env_index: int
 ) -> VecEnv:
+    kwargs = json.loads(cfg.kwargs)
     env = create_env(
-        Config(),
+        Config(**kwargs),
         num_envs,
         num_processes,
         first_env_index=first_env_index,

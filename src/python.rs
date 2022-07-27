@@ -7,13 +7,20 @@ use pyo3::prelude::*;
 
 #[derive(Clone)]
 #[pyclass]
-pub struct Config;
+pub struct Config {
+    pub min_action_delay: usize,
+    pub max_action_delay: usize,
+}
 
 #[pymethods]
 impl Config {
     #[new]
-    fn new() -> Self {
-        Config
+    #[args(min_action_delay = "0", max_action_delay = "0")]
+    fn new(min_action_delay: usize, max_action_delay: usize) -> Self {
+        Config {
+            min_action_delay,
+            max_action_delay,
+        }
     }
 }
 

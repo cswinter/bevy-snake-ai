@@ -598,7 +598,7 @@ pub fn run(
 }
 
 #[cfg(feature = "python")]
-pub fn run_headless(_: python::Config, agents: [TrainAgent; 2], seed: u64) {
+pub fn run_headless(config: python::Config, agents: [TrainAgent; 2], seed: u64) {
     use bevy::app::ScheduleRunnerSettings;
     use std::time::Duration;
 
@@ -609,7 +609,7 @@ pub fn run_headless(_: python::Config, agents: [TrainAgent; 2], seed: u64) {
         )))
         .insert_resource(Config {
             easy_mode: false,
-            action_delay: 0..4,
+            action_delay: config.min_action_delay..(config.max_action_delay + 1),
         })
         .insert_resource(Opponents(vec![]))
         .insert_non_send_resource(Players([Some(Box::new(a1)), Some(Box::new(a2))]))
