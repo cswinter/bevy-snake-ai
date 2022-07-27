@@ -22,7 +22,10 @@ pub(crate) fn snake_movement_agent(
     }
 
     // Check if all loaded
-    if opponents.0.is_empty() && opponent_handles.0.iter().all(|h| assets.get(h).is_some()) {
+    if opponents.0.is_empty()
+        && !opponent_handles.0.is_empty()
+        && opponent_handles.0.iter().all(|h| assets.get(h).is_some())
+    {
         for handle in opponent_handles.0.iter() {
             let net = assets.get(handle).unwrap().agent.clone();
             opponents.0.push(net);

@@ -7,6 +7,8 @@ use std::collections::VecDeque;
 use std::ops::Range;
 
 use ai::{snake_movement_agent, OpponentHandles, Opponents, Players};
+#[cfg(feature = "python")]
+use bevy::asset::AssetPlugin;
 use bevy::core::FixedTimestep;
 use bevy::prelude::*;
 #[cfg(feature = "python")]
@@ -612,5 +614,8 @@ pub fn run_headless(_: python::Config, agents: [TrainAgent; 2], seed: u64) {
         .insert_resource(Opponents(vec![]))
         .insert_non_send_resource(Players([Some(Box::new(a1)), Some(Box::new(a2))]))
         .add_plugins(MinimalPlugins)
+        .add_plugin(AssetPlugin::default())
+        .add_asset::<RogueNetAsset>()
+        .init_asset_loader::<RogueNetAssetLoader>()
         .run();
 }
