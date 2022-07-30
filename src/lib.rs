@@ -373,10 +373,24 @@ fn game_over(
                     }
                     _ => segments_res.0[i].len() as f32 * 0.1,
                 };
+                let is_win = winner.iter().any(|p| p.index() == i);
+                let is_draw = !winner.is_some();
                 player.game_over(
                     &Obs::new(score)
                         .metric(game_over_reason_str, 1.0)
-                        .metric("final_length", segments_res.0[i].len() as f32),
+                        .metric("final_length", segments_res.0[i].len() as f32)
+                        .metric("win", if is_win { 1.0 } else { 0.0 })
+                        .metric("draw", if is_draw { 1.0 } else { 0.0 })
+                        .metric(
+                            "score",
+                            if is_win {
+                                1.0
+                            } else if is_draw {
+                                0.5
+                            } else {
+                                0.0
+                            },
+                        ),
                 );
             }
         }
