@@ -27,7 +27,14 @@ pub(crate) fn snake_movement_agent(
         && opponent_handles.0.iter().all(|h| assets.get(h).is_some())
     {
         for handle in opponent_handles.0.iter() {
-            let net = assets.get(handle).unwrap().agent.clone();
+            let net = assets
+                .get(handle)
+                .unwrap()
+                .agent
+                .clone()
+                .with_feature_adaptor::<Head>()
+                .with_feature_adaptor::<SnakeSegment>()
+                .with_feature_adaptor::<Food>();
             opponents.0.push(net);
         }
         println!("Loaded all opponents {:?}", opponents.0.len());

@@ -340,12 +340,6 @@ fn game_over(
     segments_res: ResMut<SnakeSegments>,
 ) {
     if let Some(GameOverEvent(winner, reason)) = reader.iter().next() {
-        let game_over_reason_str = match reason {
-            GameOverReason::WallCollision => "game_over/wall_collision",
-            GameOverReason::SnakeCollision => "game_over/snake_collision",
-            GameOverReason::HeadCollision => "game_over/head_collision",
-            GameOverReason::MaxLengthReached => "game_over/max_length_reached",
-        };
         pause.0 = 10;
 
         if matches!(reason, GameOverReason::MaxLengthReached) {
@@ -377,10 +371,25 @@ fn game_over(
                 let is_draw = !winner.is_some();
                 player.game_over(
                     &Obs::new(score)
-                        .metric(game_over_reason_str, 1.0)
+                        .metric(
+                            "game_over/wall_collision",
+                            btf(matches!(reason, GameOverReason::WallCollision)),
+                        )
+                        .metric(
+                            "game_over/snake_collision",
+                            btf(matches!(reason, GameOverReason::SnakeCollision)),
+                        )
+                        .metric(
+                            "game_over/head_collision",
+                            btf(matches!(reason, GameOverReason::HeadCollision)),
+                        )
+                        .metric(
+                            "game_over/max_length_reached",
+                            btf(matches!(reason, GameOverReason::MaxLengthReached)),
+                        )
                         .metric("final_length", segments_res.0[i].len() as f32)
-                        .metric("win", if is_win { 1.0 } else { 0.0 })
-                        .metric("draw", if is_draw { 1.0 } else { 0.0 })
+                        .metric("win", btf(is_win))
+                        .metric("draw", btf(is_draw))
                         .metric(
                             "score",
                             if is_win {
@@ -394,6 +403,14 @@ fn game_over(
                 );
             }
         }
+    }
+}
+
+fn btf(b: bool) -> f32 {
+    if b {
+        1.0
+    } else {
+        0.0
     }
 }
 
@@ -572,11 +589,21 @@ pub fn run(
     easy_mode: bool,
 ) {
     let opponent: Box<dyn Agent> = match agent_path {
-        Some(path) => agent::load(path),
+        Some(path) => Box::new(
+            RogueNetAgent::load(path)
+                .with_feature_adaptor::<ai::Head>()
+                .with_feature_adaptor::<ai::SnakeSegment>()
+                .with_feature_adaptor::<ai::Food>(),
+        ),
         None => agent::random_seeded(42),
     };
     let player: Option<Box<dyn Agent>> = match agent2_path {
-        Some(path) => Some(agent::load(path)),
+        Some(path) => Some(Box::new(
+            RogueNetAgent::load(path)
+                .with_feature_adaptor::<ai::Head>()
+                .with_feature_adaptor::<ai::SnakeSegment>()
+                .with_feature_adaptor::<ai::Food>(),
+        )),
         None => None,
     };
     let opponents = opponents
