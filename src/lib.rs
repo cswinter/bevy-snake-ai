@@ -9,8 +9,8 @@ use std::ops::Range;
 use ai::{snake_movement_agent, OpponentHandles, Opponents, Players};
 #[cfg(feature = "python")]
 use bevy::asset::AssetPlugin;
-use bevy::core::FixedTimestep;
 use bevy::prelude::*;
+use bevy::time::FixedTimestep;
 #[cfg(feature = "python")]
 use entity_gym_rs::agent::TrainAgent;
 use entity_gym_rs::agent::{
@@ -157,7 +157,7 @@ fn spawn_level_text(mut commands: Commands, asset_server: Res<AssetServer>) {
     };
     commands
         .spawn_bundle(Text2dBundle {
-            text: Text::with_section("level 1", text_style, text_alignment),
+            text: Text::from_section("level 1", text_style).with_alignment(text_alignment),
             transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
             ..default()
         })
@@ -166,7 +166,7 @@ fn spawn_level_text(mut commands: Commands, asset_server: Res<AssetServer>) {
     let text_style = TextStyle {
         font,
         font_size: 40.0,
-        color: Color::DARK_GRAY,
+        color: Color::rgb(0.4, 0.05, 0.05),
     };
     let text_alignment = TextAlignment {
         vertical: VerticalAlign::Top,
@@ -174,7 +174,7 @@ fn spawn_level_text(mut commands: Commands, asset_server: Res<AssetServer>) {
     };
     commands
         .spawn_bundle(Text2dBundle {
-            text: Text::with_section("❤❤", text_style, text_alignment),
+            text: Text::from_section("❤❤", text_style).with_alignment(text_alignment),
             transform: Transform::from_translation(Vec3::new(-240.0, 240.0, 0.0)),
             ..default()
         })
@@ -182,7 +182,7 @@ fn spawn_level_text(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 fn setup_camera(mut commands: Commands) {
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+    commands.spawn_bundle(Camera2dBundle::default());
 }
 
 fn spawn_snake(
@@ -518,13 +518,14 @@ fn snake_growth(
 }
 
 fn size_scaling(windows: Res<Windows>, mut q: Query<(&Size, &mut Transform)>) {
-    let window = windows.get_primary().unwrap();
-    for (sprite_size, mut transform) in q.iter_mut() {
-        transform.scale = Vec3::new(
-            sprite_size.width / ARENA_WIDTH as f32 * window.width() as f32,
-            sprite_size.height / ARENA_HEIGHT as f32 * window.height() as f32,
-            2.0,
-        );
+    if let Some(window) = windows.get_primary() {
+        for (sprite_size, mut transform) in q.iter_mut() {
+            transform.scale = Vec3::new(
+                sprite_size.width / ARENA_WIDTH as f32 * window.width() as f32,
+                sprite_size.height / ARENA_HEIGHT as f32 * window.height() as f32,
+                2.0,
+            );
+        }
     }
 }
 
@@ -533,13 +534,14 @@ fn position_translation(windows: Res<Windows>, mut q: Query<(&Position, &ZPos, &
         let tile_size = bound_window / bound_game;
         pos / bound_game * bound_window - (bound_window / 2.) + (tile_size / 2.)
     }
-    let window = windows.get_primary().unwrap();
-    for (pos, zpos, mut transform) in q.iter_mut() {
-        transform.translation = Vec3::new(
-            convert(pos.x as f32, window.width() as f32, ARENA_WIDTH as f32),
-            convert(pos.y as f32, window.height() as f32, ARENA_HEIGHT as f32),
-            zpos.z as f32,
-        );
+    if let Some(window) = windows.get_primary() {
+        for (pos, zpos, mut transform) in q.iter_mut() {
+            transform.translation = Vec3::new(
+                convert(pos.x as f32, window.width() as f32, ARENA_WIDTH as f32),
+                convert(pos.y as f32, window.height() as f32, ARENA_HEIGHT as f32),
+                zpos.z as f32,
+            );
+        }
     }
 }
 
