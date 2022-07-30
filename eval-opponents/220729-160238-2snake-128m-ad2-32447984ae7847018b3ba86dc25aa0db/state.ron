@@ -1,0 +1,62 @@
+State(
+    step: 128000000,
+    restart: 0,
+    next_eval_step: 128000000,
+    agent: "<blob:msgpack>",
+    value_function: None,
+    optimizer: "<blob:msgpack>",
+    vf_optimizer: None,
+    obs_space: ObsSpace(
+        global_features: [],
+        entities: {
+            "SnakeSegment": Entity(
+                features: [
+                    "x",
+                    "y",
+                    "is_enemy",
+                    "distance_from_head",
+                    "distance_from_tail",
+                ],
+            ),
+            "Head": Entity(
+                features: [
+                    "x",
+                    "y",
+                    "is_enemy",
+                    "action_delay",
+                    "action_queue.0.is_Up",
+                    "action_queue.0.is_Down",
+                    "action_queue.0.is_Left",
+                    "action_queue.0.is_Right",
+                    "action_queue.0.is_None",
+                    "action_queue.1.is_Up",
+                    "action_queue.1.is_Down",
+                    "action_queue.1.is_Left",
+                    "action_queue.1.is_Right",
+                    "action_queue.1.is_None",
+                    "action_queue.2.is_Up",
+                    "action_queue.2.is_Down",
+                    "action_queue.2.is_Left",
+                    "action_queue.2.is_Right",
+                    "action_queue.2.is_None",
+                ],
+            ),
+            "Food": Entity(
+                features: [
+                    "x",
+                    "y",
+                ],
+            ),
+        },
+    ),
+    action_space: {
+        "Direction": CategoricalActionSpace(
+            index_to_label: [
+                "Left",
+                "Up",
+                "Right",
+                "Down",
+            ],
+        ),
+    },
+)
