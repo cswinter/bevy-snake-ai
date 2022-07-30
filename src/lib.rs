@@ -103,7 +103,11 @@ struct ResetGameEvent;
 #[derive(Component)]
 struct Level {
     level: usize,
+    lives: usize,
 }
+
+#[derive(Component)]
+struct LivesText;
 
 struct GrowthEvent(Player);
 
@@ -154,10 +158,27 @@ fn spawn_level_text(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn_bundle(Text2dBundle {
             text: Text::with_section("level 1", text_style, text_alignment),
-            transform: Transform::from_translation(Vec3::new(0.0, 00.0, -0.0)),
+            transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
             ..default()
         })
-        .insert(Level { level: 1 });
+        .insert(Level { level: 1, lives: 2 });
+    let font = asset_server.load("fonts/seguiemj.ttf");
+    let text_style = TextStyle {
+        font,
+        font_size: 40.0,
+        color: Color::DARK_GRAY,
+    };
+    let text_alignment = TextAlignment {
+        vertical: VerticalAlign::Top,
+        horizontal: HorizontalAlign::Left,
+    };
+    commands
+        .spawn_bundle(Text2dBundle {
+            text: Text::with_section("❤❤", text_style, text_alignment),
+            transform: Transform::from_translation(Vec3::new(-240.0, 240.0, 0.0)),
+            ..default()
+        })
+        .insert(LivesText);
 }
 
 fn setup_camera(mut commands: Commands) {
@@ -353,8 +374,20 @@ fn game_over(
 
         if let Some(mut level) = level.iter_mut().next() {
             match winner {
-                Some(Player::Blue) if level.level < opponents.0.len() => level.level += 1,
-                Some(Player::Red) if level.level > 1 => level.level -= 1,
+                Some(Player::Blue) => {
+                    if level.level < opponents.0.len() {
+                        level.level += 1;
+                    }
+                    level.lives = 2;
+                }
+                Some(Player::Red) if level.level > 1 => {
+                    if level.lives == 0 {
+                        level.level -= 1;
+                        level.lives = 2;
+                    } else {
+                        level.lives -= 1;
+                    }
+                }
                 _ => {}
             }
         }
@@ -421,6 +454,7 @@ fn reset_game(
     segments_res: ResMut<SnakeSegments>,
     mut food_timer: ResMut<FoodTimer>,
     mut level_text: Query<(&Level, &mut Text)>,
+    mut lives_text: Query<&mut Text, Without<Level>>,
     rng: ResMut<SmallRng>,
     food: Query<Entity, With<Food>>,
     config: Res<Config>,
@@ -433,6 +467,9 @@ fn reset_game(
         spawn_snake(commands, segments_res, rng, config);
         if let Some((level, mut text)) = level_text.iter_mut().next() {
             text.sections[0].value = format!("level {}", level.level);
+            if let Some(mut text) = lives_text.iter_mut().next() {
+                text.sections[0].value = "❤".repeat(level.lives);
+            }
         }
     }
 }
