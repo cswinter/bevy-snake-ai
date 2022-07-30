@@ -3,7 +3,7 @@ TrainConfig(
     total_timesteps: 128000000,
     env: (
         id: "BevySnake",
-        env.kwargs: "{\"min_action_delay\": 2, \"max_action_delay\": 2}",
+        kwargs: "{\"min_action_delay\": 2, \"max_action_delay\": 2}",
     ),
     net: (
         relpos_encoding: (
