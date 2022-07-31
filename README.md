@@ -1,12 +1,12 @@
 # EntityGym AI for Bevy Snake Game
 
-This project demonstrates how to use [EntityGym Rust](https://github.com/entity-neural-network/entity-gym-rs) to add a deep neural network opponent to [Marcus Buffett's snake clone](https://mbuffett.com/posts/bevy-snake-tutorial/).
+This project demonstrates how to use [EntityGym Rust](https://github.com/entity-neural-network/entity-gym-rs) to add a deep neural network opponent to [Marcus Buffett's snake clone](https://mbuffett.com/posts/bevy-snake-tutorial/). 
+[Play the web build here](https://cswinter.github.io/bevy-snake-ai/).
 
 https://user-images.githubusercontent.com/12845088/182036669-ae9e28d1-39d0-4b8e-b11b-4c8c2fc91603.mp4
 
 ## Usage
 
-[Play the web build here](https://cswinter.github.io/bevy_snake_ai/).
 Control the blue snake with WASD or the arrow keys.
 Be the first snake to reach to reach a length of 10.
 
@@ -15,6 +15,8 @@ To run the native app, clone the repo and run:
 ```bash
 cargo run --release
 ```
+
+Link to web build: [https://cswinter.github.io/bevy-snake-ai/](https://cswinter.github.io/bevy-snake-ai/)
 
 ## Implementation
 
@@ -26,8 +28,8 @@ It assumes familiarity with the [EntityGym snake tutorial][entity-gym-snake-tuto
 In our [previous implementation](entity-gym-snake-tutorial), we had a single agent playing the game.
 Here, to allow the user to play against the AI, we train with two agents.
 So we replace our `struct Player(Box<dyn Agent>)` resource with a `struct Players([Option<Box<dyn Agent>>; 2])`.
-During training, both of the agents are `Some` and control the two snakes.
-When running the game interactively, the first of the agents is set to `None` to allow the user to control the first snake.
+During training, both of the players are `Some` train agent, each controlling one of the two snakes.
+When running the game interactively, the first of the players is set to `None`and the first snake is controlled by user input.
 
 To set up training with self-play between two agents, we simply change the function signature of `run_headless`:
 
@@ -39,7 +41,7 @@ To set up training with self-play between two agents, we simply change the funct
 In [`src/python.rs`](src/python.rs), we can then use the [`TrainEnvBuilder::build_multiagent`](https://docs.rs/entity-gym-rs/latest/entity_gym_rs/agent/struct.TrainEnvBuilder.html#method.build_multiagent) instead of [`TrainEnvBuilder::build`](https://docs.rs/entity-gym-rs/latest/entity_gym_rs/agent/struct.TrainEnvBuilder.html#method.build) to create a Python training environment with multiple training agents.
 
 When training with a single agent, we can use the [`AgentOps::act`](https://docs.rs/entity-gym-rs/latest/entity_gym_rs/agent/trait.AgentOps.html#method.act) method to get the action from the agent.
-However, `act` will block until all agents have made their move, which means that there are multiple agents this cause us to deadlock.
+However, `act` will block until all agents have made their move, which would cause a deadlock when we have multiple agents.
 Instead, we first call the nonblocking [`AgentOps::act_async`](https://docs.rs/entity-gym-rs/latest/entity_gym_rs/agent/trait.AgentOps.html#method.act_async) for every agent to get an [`ActionReceiver`](https://docs.rs/entity-gym-rs/latest/entity_gym_rs/agent/struct.ActionReceiver.html) that we can later call `recv` on to await the action.
 
 ### Action delay
@@ -48,7 +50,7 @@ If we allow the AI to instantly take an action on every frame, it plays much too
 To simulate human reaction speeds, we introduce a delay to all actions by the AI.
 We do this by adding an `action_queue: VecDeque<Direction>` field to the `SnakeHead` entity which will queue up actions to be taken on future frames.
 When the AI takes an action, instead of applying it immediately, we instead push it to the back of the queue.
-Once the queue reaches the maximum length, we pop and apply the action at the front  the queue.
+Once the queue reaches the maximum length, we pop and apply the action at the front the queue.
 
 ```rust
 head.action_queue.push_back(dir);
@@ -61,7 +63,7 @@ if head.action_queue.len() >= head.action_delay {
 ```
 
 The AI has no knowledge of anything other than the information we pass to it on each frame.
-To allow the AI to take into account its past actions, we add array with all outstanding actions to the `Head` entity:
+To allow the AI to take into account its pending actions, we add array with all outstanding actions to the `Head` entity:
 
 ```rust
 #[derive(Featurizable)]
@@ -94,7 +96,7 @@ The entity-gym-rs library has an integration with Bevy's asset loading system wh
 
 ```toml
 [dependencies]
-entity-gym-rs = { version = "0.3.1", features = ["bevy"] }
+entity-gym-rs = { version = "0.4.0", features = ["bevy"] }
 ```
 
 We register a [`RogueNetAsset`](https://docs.rs/entity-gym-rs/latest/entity_gym_rs/agent/struct.RogueNetAsset.html) and [`RogueNetAssetLoader`](https://docs.rs/entity-gym-rs/latest/entity_gym_rs/agent/struct.RogueNetAssetLoader.html) and add a `load_agents` startup system to load the model checkpoints from the [`assets/agents`](assets/agents) directory.
@@ -108,7 +110,7 @@ App::new()
 
 fn load_agents(mut opponent_handles: ResMut<OpponentHandles>, server: Res<AssetServer>) {
     opponent_handles.0 = [
-        "500k", "1m", "2m", "4m", "8m", "16m", "32m", "64m", "128m", "256m",
+        "16m2ad", "32m2ad", "64m2ad", "128m2ad", "256m2ad", "512m2ad",
     ]
     .iter()
     .map(|name| server.load(&format!("agents/{}.roguenet", name)))
