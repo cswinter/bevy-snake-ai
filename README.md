@@ -2,7 +2,7 @@
 
 This project demonstrates how to use [EntityGym Rust](https://github.com/entity-neural-network/entity-gym-rs) to add a deep neural network opponent to [Marcus Buffett's snake clone](https://mbuffett.com/posts/bevy-snake-tutorial/).
 
-https://user-images.githubusercontent.com/12845088/180652387-7ec64538-4bdd-4dc7-b83e-b37f17f31179.mp4
+https://user-images.githubusercontent.com/12845088/182036669-ae9e28d1-39d0-4b8e-b11b-4c8c2fc91603.mp4
 
 ## Usage
 
