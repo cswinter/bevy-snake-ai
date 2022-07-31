@@ -585,9 +585,8 @@ fn food_spawner(
 }
 
 fn load_agents(mut opponent_handles: ResMut<OpponentHandles>, server: Res<AssetServer>) {
-    // load all 10 agents
     opponent_handles.0 = [
-        "500k", "1m", "2m", "4m", "8m", "16m", "32m", "64m", "128m", "256m",
+        "16m2ad", "32m2ad", "64m2ad", "128m2ad", "256m2ad", "512m2ad",
     ]
     .iter()
     .map(|name| server.load(&format!("agents/{}.roguenet", name)))
