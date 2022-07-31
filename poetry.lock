@@ -203,7 +203,7 @@ test = ["pytest", "black"]
 
 [[package]]
 name = "enn-trainer"
-version = "0.1.9"
+version = "0.1.10"
 description = "PPO and supervised training loops compatible with entity-gym"
 category = "main"
 optional = false
@@ -242,7 +242,7 @@ tqdm = ">=4.63.1,<5.0.0"
 
 [[package]]
 name = "entity-gym-rs"
-version = "0.3.4"
+version = "0.3.6"
 description = "Rust bindings for the entity-gym library"
 category = "main"
 optional = false
@@ -323,7 +323,7 @@ docs = ["sphinx"]
 
 [[package]]
 name = "grpcio"
-version = "1.47.0"
+version = "1.48.0"
 description = "HTTP/2-based RPC framework"
 category = "main"
 optional = false
@@ -333,7 +333,7 @@ python-versions = ">=3.6"
 six = ">=1.5.2"
 
 [package.extras]
-protobuf = ["grpcio-tools (>=1.47.0)"]
+protobuf = ["grpcio-tools (>=1.48.0)"]
 
 [[package]]
 name = "hyperstate"
@@ -807,14 +807,14 @@ pyasn1 = ">=0.1.3"
 
 [[package]]
 name = "scipy"
-version = "1.8.1"
+version = "1.9.0"
 description = "SciPy: Scientific Library for Python"
 category = "main"
 optional = false
-python-versions = ">=3.8,<3.11"
+python-versions = ">=3.8,<3.12"
 
 [package.dependencies]
-numpy = ">=1.17.3,<1.25.0"
+numpy = ">=1.18.5,<1.25.0"
 
 [[package]]
 name = "sentry-sdk"
@@ -1080,7 +1080,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8.0,<3.10"
-content-hash = "8d690d6f9d614ff8502e9affba1a3094974cdbc77629a2a82ec061000569bd75"
+content-hash = "6cb1386467eeed8006094cfbc4acecabc1da4141ad1874362b58ef219b73ee57"
 
 [metadata.files]
 absl-py = []
