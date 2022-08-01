@@ -586,7 +586,7 @@ fn food_spawner(
 
 fn load_agents(mut opponent_handles: ResMut<OpponentHandles>, server: Res<AssetServer>) {
     opponent_handles.0 = [
-        "16m2ad", "32m2ad", "64m2ad", "128m2ad", "256m2ad", "512m2ad",
+        "16m2ad", "32m2ad", "64m2ad", "128m2ad", "256m2ad", "512m2ad", "1b2ad",
     ]
     .iter()
     .map(|name| server.load(&format!("agents/{}.roguenet", name)))
@@ -629,6 +629,7 @@ pub fn run(
     let opponent: Box<dyn Agent> = match agent_path {
         Some(path) => Box::new(
             RogueNetAgent::load(path)
+                .unwrap()
                 .with_feature_adaptor::<ai::Head>()
                 .with_feature_adaptor::<ai::SnakeSegment>()
                 .with_feature_adaptor::<ai::Food>(),
@@ -638,6 +639,7 @@ pub fn run(
     let player: Option<Box<dyn Agent>> = match agent2_path {
         Some(path) => Some(Box::new(
             RogueNetAgent::load(path)
+                .unwrap()
                 .with_feature_adaptor::<ai::Head>()
                 .with_feature_adaptor::<ai::SnakeSegment>()
                 .with_feature_adaptor::<ai::Food>(),
@@ -646,7 +648,7 @@ pub fn run(
     };
     let opponents = opponents
         .into_iter()
-        .map(|path| RogueNetAgent::load(&path))
+        .map(|path| RogueNetAgent::load(&path).unwrap())
         .collect::<Vec<_>>();
     base_app(&mut App::new(), 0, Some(0.150))
         .insert_resource(WindowDescriptor {
