@@ -1,7 +1,7 @@
 # EntityGym AI for Bevy Snake Game
 
 This project demonstrates how to use [EntityGym Rust](https://github.com/entity-neural-network/entity-gym-rs) to add a deep neural network opponent to [Marcus Buffett's snake clone](https://mbuffett.com/posts/bevy-snake-tutorial/). 
-[Play the web build here](https://cswinter.github.io/bevy-snake-ai/).
+[Play the web build here](https://cswinter.github.io/bevy-snake-ai/) (if keyboard isn't working, click on the game).
 
 https://user-images.githubusercontent.com/12845088/182036669-ae9e28d1-39d0-4b8e-b11b-4c8c2fc91603.mp4
 
