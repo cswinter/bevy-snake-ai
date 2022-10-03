@@ -102,6 +102,8 @@ entity-gym-rs = { version = "0.4.0", features = ["bevy"] }
 We register a [`RogueNetAsset`](https://docs.rs/entity-gym-rs/latest/entity_gym_rs/agent/struct.RogueNetAsset.html) and [`RogueNetAssetLoader`](https://docs.rs/entity-gym-rs/latest/entity_gym_rs/agent/struct.RogueNetAssetLoader.html) and add a `load_agents` startup system to load the model checkpoints from the [`assets/agents`](assets/agents) directory.
 
 ```rust
+pub struct OpponentHandles(pub Vec<Handle<RogueNetAsset>>);
+
 App::new()
     .add_asset::<RogueNetAsset>()
     .init_asset_loader::<RogueNetAssetLoader>()
